@@ -1,0 +1,19 @@
+{
+  "name": "jbuitenhuis",
+  "owner": {
+    "name": "Jesse Buitenhuis",
+    "email": "jessebuitenhuis@gmail.com"
+  },
+  "plugins": [
+    {
+      "name": "jbuitenhuis-claude",
+      "source": ".",
+      "description": "My development workflow for Claude",
+      "version": "1.0.0",
+      "author": {
+        "name": "Jesse Buitenhuis",
+        "email": "jessebuitenhuis@gmail.com"
+      }
+    }
+  ]
+}
