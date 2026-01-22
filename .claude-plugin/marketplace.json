@@ -6,7 +6,7 @@
   },
   "plugins": [
     {
-      "name": "jbuitenhuis-claude",
+      "name": "shared",
       "source": "./",
       "description": "My development workflow for Claude",
       "version": "1.0.0",
