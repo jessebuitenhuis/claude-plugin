@@ -4,4 +4,3 @@ description: Best practices for backend development. Use this when writing or re
 ---
 
 Write great backend code
-change
