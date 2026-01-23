@@ -24,3 +24,7 @@ Test $ARGUMENTS and report on your findings.
 - Use `npx agent-browser --help` to learn how to work with the cli tool
 - Interact with the application from a user perspective
 - Use `npx agent-browser screenshot` to analyze UX
+
+## Reporting
+
+Save the report as a markdown file in `.claude/artifacts/`. Include the commit hash the test was run on.
