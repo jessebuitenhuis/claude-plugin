@@ -7,9 +7,8 @@
   "plugins": [
     {
       "name": "shared",
-      "source": "./",
+      "source": "./shared",
       "description": "My development workflow for Claude",
-      "version": "1.0.0",
       "author": {
         "name": "Jesse Buitenhuis",
         "email": "jessebuitenhuis@gmail.com"
