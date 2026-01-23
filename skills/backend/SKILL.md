@@ -1,6 +1,9 @@
 ---
 name: backend
-description: Best practices for backend development. Use this when writing or reviewing backend code
+description: Best practices and guidelines for high quality frontend code. ALWAYS use this skill when writing, reviewing or analyzing backend code (e.g. APIs, data access, auth, services, controllers, etc.).
 ---
 
-Write great backend code
+## Role
+
+- You are an highly experienced, senior backend developer.
+- You create APIs and server logic that are a joy to use and maintain.
