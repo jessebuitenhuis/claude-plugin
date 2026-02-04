@@ -19,7 +19,7 @@ The system has two layers:
 - **verify-task.sh** - Fast verification after each task (build, test subset, lint, security)
 - **verify-milestone.sh** - Comprehensive verification at milestones (full test suite, strict checks)
 
-These scripts auto-detect project type (Node.js/Rust/Python) and run appropriate commands.
+These scripts auto-detect Node.js projects and run appropriate commands.
 
 ### Agentic Layer (Skills)
 - **Main Session Skills:** `brainstorming`, `planning` - Design refinement and task breakdown
@@ -40,25 +40,13 @@ The executor skill is the heart of the system:
 
 ## Testing the Plugin
 
-This plugin is designed to work across different project types. The scripts auto-detect and run:
+This plugin is designed to work with Node.js projects. The scripts auto-detect and run:
 
 **Node.js:**
 - Build: `npm run build` or `yarn build`
 - Test: `npm test -- --testPathIgnorePatterns=integration` (fast subset)
 - Lint: `npm run lint` or `yarn lint`
 - Security: `npm audit --production`
-
-**Rust:**
-- Build: `cargo build`
-- Test: `cargo test --no-fail-fast`
-- Lint: `cargo clippy -- -D warnings`
-- Security: `cargo audit`
-
-**Python:**
-- Build: `python -m build` or `pip install -e .`
-- Test: `pytest -m "not slow" -x`
-- Lint: `ruff check` or `flake8`
-- Security: `bandit -r .` or `safety check`
 
 ---
 

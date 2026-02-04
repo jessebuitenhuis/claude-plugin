@@ -48,10 +48,6 @@ generate_branch_name() {
 detect_project_type() {
     if [[ -f "package.json" ]]; then
         echo "nodejs"
-    elif [[ -f "Cargo.toml" ]]; then
-        echo "rust"
-    elif [[ -f "pyproject.toml" ]] || [[ -f "requirements.txt" ]]; then
-        echo "python"
     else
         echo "unknown"
     fi
@@ -95,22 +91,6 @@ install_dependencies() {
                 esac
             )
             ;;
-        rust)
-            log_info "No installation needed for Rust (cargo handles dependencies)"
-            ;;
-        python)
-            (
-                cd "$worktree_path"
-                if [[ -f "pyproject.toml" ]]; then
-                    pip install -e .
-                elif [[ -f "requirements.txt" ]]; then
-                    pip install -r requirements.txt
-                else
-                    log_error "No Python dependency file found"
-                    return 1
-                fi
-            )
-            ;;
         *)
             log_warn "Unknown project type, skipping dependency installation"
             ;;
@@ -137,42 +117,6 @@ run_baseline_tests() {
                 )
             else
                 log_warn "No test script found in package.json"
-            fi
-            ;;
-        rust)
-            if grep -q '\[lib\]' "$worktree_path/Cargo.toml" 2>/dev/null || \
-               grep -q '\[\[bin\]\]' "$worktree_path/Cargo.toml" 2>/dev/null; then
-                (
-                    cd "$worktree_path"
-                    # Run tests without capturing output
-                    if ! cargo test --no-fail-fast 2>&1; then
-                        log_error "Baseline tests failed - environment not ready for development"
-                        return 1
-                    fi
-                )
-            else
-                log_warn "No tests configured in Cargo.toml"
-            fi
-            ;;
-        python)
-            if command -v pytest &> /dev/null; then
-                (
-                    cd "$worktree_path"
-                    if ! pytest -x -q 2>&1; then
-                        log_error "Baseline tests failed - environment not ready for development"
-                        return 1
-                    fi
-                )
-            elif command -v python &> /dev/null; then
-                (
-                    cd "$worktree_path"
-                    if ! python -m unittest discover -s . -p 'test_*.py' -q 2>&1; then
-                        log_error "Baseline tests failed - environment not ready for development"
-                        return 1
-                    fi
-                )
-            else
-                log_warn "No test runner found (pytest or unittest)"
             fi
             ;;
         *)

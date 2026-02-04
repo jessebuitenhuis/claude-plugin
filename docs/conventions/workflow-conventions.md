@@ -379,30 +379,15 @@ main "$@"
 - **Exit codes:** 0 for success, 1 for failure
 
 ### Project Detection
-Auto-detect project type from presence of files:
-- **Node.js:** `package.json` present
-- **Rust:** `Cargo.toml` present
-- **Python:** `pyproject.toml` or `requirements.txt` present
+Auto-detect Node.js projects from presence of `package.json`
 
-### Commands by Project Type
+### Commands
 
 **Node.js:**
 - Build: `npm run build` or `yarn build`
 - Test: `npm test` or `yarn test`
 - Lint: `npm run lint` or `yarn lint`
 - Security: `npm audit` or `yarn audit`
-
-**Rust:**
-- Build: `cargo build`
-- Test: `cargo test`
-- Lint: `cargo clippy`
-- Security: `cargo audit`
-
-**Python:**
-- Build: `python -m build` or `pip install -e .`
-- Test: `pytest`
-- Lint: `ruff check` or `flake8` or `pylint`
-- Security: `bandit` or `safety check`
 
 ---
 
@@ -415,7 +400,7 @@ Auto-detect project type from presence of files:
 - **Tests:** Write tests for non-trivial code
 
 ### Style Guidelines
-- **Naming:** Follow language conventions (camelCase for JS/TS, snake_case for Python)
+- **Naming:** camelCase for JavaScript/TypeScript
 - **Indentation:** Use spaces, not tabs
 - **Line length:** Keep lines under 100 characters
 - **Comments:** Comment why, not what
@@ -529,18 +514,16 @@ Auto-detect project type from presence of files:
 ### Dependency Management
 - **Updates:** Keep dependencies up to date
 - **Vet:** Review new dependencies before adding
-- **Lock:** Use lockfiles (package-lock.json, Cargo.lock)
+- **Lock:** Use lockfiles (package-lock.json)
 
 ### Secrets Management
 - **Never commit:** Secrets, API keys, credentials
 - **Environment:** Use environment variables
 - **Gitignore:** Ensure secrets files are gitignored
 
-### Security Checks by Project Type
+### Security Checks
 
 **Node.js:** `npm audit` or `yarn audit`
-**Rust:** `cargo audit`
-**Python:** `safety check` or `bandit`
 
 ---
 

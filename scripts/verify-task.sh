@@ -36,10 +36,6 @@ print_status() {
 detect_project_type() {
     if [[ -f "package.json" ]]; then
         echo "nodejs"
-    elif [[ -f "Cargo.toml" ]]; then
-        echo "rust"
-    elif [[ -f "pyproject.toml" ]] || [[ -f "setup.py" ]]; then
-        echo "python"
     else
         echo "unknown"
     fi
@@ -140,131 +136,9 @@ case "$PROJECT_TYPE" in
         fi
         ;;
 
-    rust)
-        # Build
-        echo "### Running build..."
-        if cargo build 2>&1 | tee /tmp/build.log; then
-            BUILD_STATUS="✅ PASS"
-        else
-            BUILD_STATUS="❌ FAIL"
-            OVERALL="❌ FAIL"
-        fi
-
-        # Test
-        echo ""
-        echo "### Running tests..."
-        if cargo test 2>&1 | tee /tmp/test.log; then
-            TEST_STATUS="✅ PASS"
-        else
-            TEST_STATUS="❌ FAIL"
-            OVERALL="❌ FAIL"
-        fi
-
-        # Lint (clippy)
-        echo ""
-        echo "### Running linter..."
-        if cargo clippy -- -D warnings 2>&1 | tee /tmp/lint.log; then
-            LINT_STATUS="✅ PASS"
-        else
-            LINT_STATUS="❌ FAIL"
-            OVERALL="❌ FAIL"
-        fi
-
-        # Security
-        echo ""
-        echo "### Running security audit..."
-        if command_exists cargo-audit || cargo audit 2>&1 | tee /tmp/security.log; then
-            SECURITY_STATUS="✅ PASS"
-        else
-            echo "cargo-audit not found, skipping security check..."
-            SECURITY_STATUS="⏭️  SKIPPED"
-        fi
-        ;;
-
-    python)
-        # Build
-        echo "### Running build..."
-        if [[ -f "pyproject.toml" ]] && grep -q "build-system" pyproject.toml; then
-            if python -m build 2>&1 | tee /tmp/build.log; then
-                BUILD_STATUS="✅ PASS"
-            else
-                BUILD_STATUS="❌ FAIL"
-                OVERALL="❌ FAIL"
-            fi
-        elif [[ -f "setup.py" ]]; then
-            if pip install -e . 2>&1 | tee /tmp/build.log; then
-                BUILD_STATUS="✅ PASS"
-            else
-                BUILD_STATUS="❌ FAIL"
-                OVERALL="❌ FAIL"
-            fi
-        else
-            echo "No build configuration found, skipping..."
-            BUILD_STATUS="⏭️  SKIPPED"
-        fi
-
-        # Test
-        echo ""
-        echo "### Running tests..."
-        if command_exists pytest; then
-            # Try to exclude slow tests
-            if pytest -m "not slow" -x 2>&1 | tee /tmp/test.log; then
-                TEST_STATUS="✅ PASS"
-            else
-                TEST_STATUS="❌ FAIL"
-                OVERALL="❌ FAIL"
-            fi
-        else
-            echo "pytest not found, skipping tests..."
-            TEST_STATUS="⏭️  SKIPPED"
-        fi
-
-        # Lint
-        echo ""
-        echo "### Running linter..."
-        if command_exists ruff; then
-            if ruff check 2>&1 | tee /tmp/lint.log; then
-                LINT_STATUS="✅ PASS"
-            else
-                LINT_STATUS="❌ FAIL"
-                OVERALL="❌ FAIL"
-            fi
-        elif command_exists flake8; then
-            if flake8 2>&1 | tee /tmp/lint.log; then
-                LINT_STATUS="✅ PASS"
-            else
-                LINT_STATUS="❌ FAIL"
-                OVERALL="❌ FAIL"
-            fi
-        else
-            echo "No linter found (ruff/flake8), skipping..."
-            LINT_STATUS="⏭️  SKIPPED"
-        fi
-
-        # Security
-        echo ""
-        echo "### Running security audit..."
-        if command_exists bandit; then
-            if bandit -r . 2>&1 | tee /tmp/security.log; then
-                SECURITY_STATUS="✅ PASS"
-            else
-                SECURITY_STATUS="⚠️  WARNINGS"
-            fi
-        elif command_exists safety; then
-            if safety check --short-report 2>&1 | tee /tmp/security.log; then
-                SECURITY_STATUS="✅ PASS"
-            else
-                SECURITY_STATUS="⚠️  WARNINGS"
-            fi
-        else
-            echo "No security tool found (bandit/safety), skipping..."
-            SECURITY_STATUS="⏭️  SKIPPED"
-        fi
-        ;;
-
     unknown)
         echo "### Unknown project type"
-        echo "Could not detect project type from package.json/Cargo.toml/pyproject.toml"
+        echo "Could not detect Node.js project (package.json not found)"
         BUILD_STATUS="⏭️  SKIPPED"
         TEST_STATUS="⏭️  SKIPPED"
         LINT_STATUS="⏭️  SKIPPED"
