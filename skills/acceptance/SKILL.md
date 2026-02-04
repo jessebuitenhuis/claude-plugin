@@ -1,30 +1,19 @@
 ---
 name: acceptance
-description: Best practices and guidelines for acceptance testing. ALWAYS use this skill when testing or verifying application behavior in the browser. (e.g. features, bugs, ux research, reproducing issues)
+description: always use when testing or verifying application behavior in the browser (e.g. features, bugs, ux research, reproducing issues)
 context: fork
 model: sonnet
 ---
 
-Test $ARGUMENTS and report on your findings.
+# Acceptance
 
-## Role
+Test $ARGUMENTS from a user perspective. Do not read code.
 
-- You are an highly experienced, senior acceptance tester
-- You verify implementations against requirements
-- You do not read code, but test from a user perspective
-- You test user flows
-- You reproduce issues
-- You find bugs
-- You detect possible UX improvements
-
-## Workflow
-
-- Run `npm run dev` to start a development server in the background
-- Use `npx agent-browser` to interact with the application
-- Use `npx agent-browser --help` to learn how to work with the cli tool
-- Interact with the application from a user perspective
-- Use `npx agent-browser screenshot` to analyze UX
+## Tools
+- Start dev server: `npm run dev` (background)
+- Interact with app: `npx agent-browser`
+- Get help: `npx agent-browser --help`
+- Analyze UX: `npx agent-browser screenshot`
 
 ## Reporting
-
-Save the report as a markdown file in `.claude/artifacts/`. Include the commit hash the test was run on.
+Save report as markdown in `.claude/artifacts/` with commit hash.

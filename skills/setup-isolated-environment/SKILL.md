@@ -3,39 +3,35 @@ name: setup-isolated-environment
 description: Sets up an isolated git worktree for safe parallel development
 ---
 
-## Purpose
-Convenient interface to invoke the setup-isolated-environment hook.
+# Setup Isolated Environment
 
-## Usage
-Invoke when:
-- Starting work on a new feature branch
-- Creating isolated environment for testing
-- Enabling parallel development work
+Creates isolated git worktree for parallel development.
 
-## What It Does
-1. Creates git worktree in `.worktrees/` directory
-2. Installs dependencies (auto-detects project type)
-3. Verifies environment is ready
-4. Returns worktree path
-
-## Workflow
-Simply invoke this skill. It will:
-- Call the setup-isolated-environment hook
-- Execute scripts/setup-worktree.sh
-- Report success with worktree location
-- Report failures with clear error messages
-
-## Expected Output
-On success:
-```
-✅ Worktree created successfully
-📍 Location: .worktrees/feature/YYYY-MM-DD-HHMMSS/
-📦 Dependencies installed
-✅ Baseline tests passed
+## Quick Setup
+```bash
+bash scripts/setup-worktree.sh
 ```
 
-On failure:
+Report worktree location on success or error details on failure.
+
+## Full Workflow (with PR)
+For complete feature work in isolation:
+
+**1. Setup**
+```bash
+bash scripts/setup-worktree.sh
 ```
-❌ Failed to create worktree
-[Error details]
+
+**2. Work**
+Execute the assigned task in the worktree.
+
+**3. Publish**
+```bash
+git add .
+git commit -m "message"
+git push -u origin branch-name
+gh pr create --title "title" --body "description"
 ```
+
+**4. Cleanup**
+Remove worktree after successful PR creation.

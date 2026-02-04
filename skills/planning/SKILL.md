@@ -5,51 +5,33 @@ description: Break down designs into actionable tasks (2-5 min each) organized i
 
 # Planning Skill
 
-## Role
+Break down designs into executable plans with clear tasks and milestones.
 
-Senior technical planner specializing in task breakdown and milestone definition for autonomous execution.
+## Process
 
-**Announce at start:** "I'm using the planning skill to create the implementation plan."
+**1. Analyze Scope**
+- Identify major work components
+- Estimate overall complexity
+- Define natural breakpoints
 
-## Workflow
+**2. Create Milestones** (3-6 tasks per milestone)
+- Group related tasks by functionality
+- Ensure each milestone creates verifiable value
+- Order by dependency
+- Plan for verify-milestone.sh at each milestone boundary
 
-### Input Requirements
+**3. Break Down Tasks** (2-5 minutes per task)
+- Make tasks independently executable
+- Define clear acceptance criteria
+- Note dependencies between tasks
+- Note file paths (create/modify/test)
+- Plan for verify-task.sh after each task
 
-- Approved design document or specification (from brainstorming skill or provided by user)
-- Clear acceptance criteria
-- Understanding of technical constraints
+**4. Output Plan**
+- Save to: `docs/plans/YYYY-MM-DD-<feature-name>.md`
+- Use format below
 
-### Planning Process
-
-1. **Analyze Scope**
-   - Identify major work components
-   - Estimate overall complexity
-   - Define natural breakpoints
-
-2. **Create Milestones** (3-6 tasks per milestone)
-   - Group related tasks by functionality
-   - Ensure each milestone creates verifiable value
-   - Order by dependency
-   - Plan for verify-milestone.sh at each milestone boundary
-
-3. **Break Down Tasks** (2-5 minutes per task)
-   - Make tasks independently executable
-   - Define clear acceptance criteria
-   - Note dependencies between tasks
-   - Estimate complexity
-   - Plan for verify-task.sh after each task
-
-4. **Output Structure**
-   - Save to: `docs/plans/YYYY-MM-DD-<feature-name>.md`
-   - Use format below (see Plan Document Template)
-
-### Context
-
-This should be run in a dedicated worktree (created by brainstorming skill or setup-isolated-environment skill).
-
-## Plan Document Template
-
-**Every plan MUST start with this header:**
+## Plan Format
 
 ```markdown
 # [Feature Name] Implementation Plan
@@ -66,13 +48,6 @@ This should be run in a dedicated worktree (created by brainstorming skill or se
 
 ---
 
-```
-
-## Task Structure
-
-**Each task follows this format:**
-
-```markdown
 ### Milestone N: [Milestone Name]
 
 **Tasks:** [K] tasks (2-5 min each)
@@ -133,128 +108,8 @@ Expected: Full test suite ✅, Build ✅, Lint (strict) ✅, Security (strict) �
 ---
 ```
 
-## Task Guidelines
+## Handoff
 
-**Granularity:**
-- Completable in 2-5 minutes by experienced developer
-- One action per step (write test, run test, write code, run tests, commit)
-- Each step is atomic and verifiable
-
-**Independence:**
-- Tasks should be independently executable
-- Clear acceptance criteria (no ambiguity)
-- Note file paths when applicable
-
-**TDD Discipline:**
-- Tests before code (RED-GREEN-REFACTOR)
-- Minimal implementation to pass tests
-- Refactor only after tests pass
-
-**Documentation:**
-- Exact file paths always
-- Complete code in plan (not "add validation")
-- Exact commands with expected output
-- Reference relevant skills with @ syntax
-
-## Milestone Guidelines
-
-**Structure:**
-- 3-6 tasks per milestone
-- Each milestone should be reviewable
-- Milestones represent meaningful progress
-- Natural breakpoints in functionality
-
-**Verification:**
-- verify-task.sh runs after each task (build, test, lint, security, quick review)
-- verify-milestone.sh runs at milestone boundaries (full test suite, comprehensive checks)
-- Plan for verification explicitly in each milestone
-
-**Dependencies:**
-- Order milestones by dependency
-- Note inter-milestone dependencies
-- Enable parallel execution when safe
-
-## Core Philosophy
-
-**Bite-Sized Tasks:**
-- Break work into 2-5 minute increments
-- Each task is one logical action
-- Fast feedback loops
-
-**TDD Always:**
-- Write failing test first
-- Implement minimal code
-- Run tests to verify
-- Commit working state
-- Refactor if needed
-
-**Frequent Commits:**
-- Commit after each task
-- Clean, incremental progress
-- Easy rollback if needed
-
-**Verification Gates:**
-- Light checks after each task (fast, catch issues early)
-- Deep reviews at milestones (comprehensive quality)
-- Deterministic scripts where possible (fast, reliable)
-
-**DRY, YAGNI:**
-- Don't Repeat Yourself
-- You Aren't Gonna Need It
-- Build what's needed, nothing more
-
-## Execution Handoff
-
-After saving the plan, offer execution:
+After saving the plan:
 
 **"Plan complete and saved to `docs/plans/<filename>.md`. Ready for execution by the executor skill."**
-
-**The executor will:**
-- Take the full plan or a subset
-- Spawn implementator subagents with appropriate skills
-- Invoke verify-task after each task
-- Invoke verify-milestone at milestone boundaries
-- Track progress and handle failures
-- Report back at checkpoints
-
-**Note:** The executor skill handles the execution logic. This planning skill focuses on creating executable plans.
-
-## Quality Checks
-
-Before finalizing the plan, verify:
-
-- [ ] All tasks have exact file paths
-- [ ] All tasks are 2-5 minutes each
-- [ ] All milestones have 3-6 tasks
-- [ ] TDD discipline followed (test first)
-- [ ] Verification checkpoints included (verify-task, verify-milestone)
-- [ ] Clear acceptance criteria for each task
-- [ ] Dependencies noted
-- [ ] Complete code in plan (not pseudocode)
-- [ ] Commit messages included
-
-## Integration with Custom Workflow
-
-**This planning skill integrates with:**
-
-- **brainstorming** skill - Provides design/refined requirements
-- **executor** skill - Executes the plan (spawns subagents, runs verification)
-- **verify-task** skill - Wrapper for scripts/verify-task.sh (light checks after each task)
-- **verify-milestone** skill - Wrapper for scripts/verify-milestone.sh (deep reviews at milestones)
-
-**Subagents spawned by executor:**
-- **implementator** - Implements individual tasks from the plan
-- **test-driven-development** - Enforces TDD discipline during implementation
-- **code-review** - Comprehensive milestone reviews
-
-**Scripts invoked:**
-- `scripts/verify-task.sh` - Build, test, lint, security, quick review
-- `scripts/verify-milestone.sh` - Full test suite, comprehensive checks
-
-## Remember
-
-- Smart agents (executor, implementator) handle decision-making and creative work
-- Dumb scripts (verify-task.sh, verify-milestone.sh) handle deterministic operations
-- Right tool for the job at each layer
-- Trust but verify at checkpoints (tasks, milestones)
-- Light checks often, deep reviews at milestones

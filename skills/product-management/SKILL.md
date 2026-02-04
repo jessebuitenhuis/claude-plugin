@@ -1,10 +1,10 @@
 ---
 name: product-management
-description: Help the user create and maintain a product management strategy.
+description: help create and maintain product management strategy
 ---
 
-Help the user create and maintain a product management strategy.
-Do not fill in information for the user, but gather information and verify assumption.
-Ask questions (1 at a time) to get clarity with the AskUserQuestion tool.
+# Product-Management Skill
 
-See [Product Management Strategy](references/PRODUCT_MANAGEMENT_STRATEGY.md) for details.
+Help create and maintain product management strategy. Use AskUserQuestion tool to gather information.
+
+See references/PRODUCT_MANAGEMENT_STRATEGY.md for the framework.
