@@ -1,6 +1,6 @@
 ---
 name: spec-compliance
-description: Review implementations against approved specifications
+description: Verify implementation correctness by comparing against specifications. Use when users ask to "verify if X is implemented correctly", "check compliance with Y", "validate implementation", or "confirm X meets requirements".
 ---
 
 # Spec Compliance Review
