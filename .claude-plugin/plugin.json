@@ -1,9 +1,23 @@
 {
   "name": "shared",
   "description": "My development workflow for Claude",
-  "version": "1.0.7",
+  "version": "1.1.1",
   "author": {
     "name": "Jesse Buitenhuis",
     "email": "jessebuitenhuis@gmail.com"
+  },
+  "hooks": {
+    "setup-isolated-environment": {
+      "description": "Creates isolated git worktree for parallel development",
+      "command": "bash scripts/setup-worktree.sh"
+    },
+    "verify-task": {
+      "description": "Runs build, test, lint, and security checks after each task",
+      "command": "bash scripts/verify-task.sh"
+    },
+    "verify-milestone": {
+      "description": "Runs full test suite and comprehensive checks at milestones",
+      "command": "bash scripts/verify-milestone.sh"
+    }
   }
 }
