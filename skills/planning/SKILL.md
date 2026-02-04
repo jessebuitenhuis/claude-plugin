@@ -113,3 +113,25 @@ Expected: Full test suite ✅, Build ✅, Lint (strict) ✅, Security (strict) �
 After saving the plan:
 
 **"Plan complete and saved to `docs/plans/<filename>.md`. Ready for execution by the executor skill."**
+
+## Handoff to Execution
+
+After the plan is approved:
+
+1. **User invokes executor:**
+   ```
+   /shared:executor <path-to-plan>
+   ```
+
+2. **Executor will:**
+   - Create isolated worktree
+   - Execute tasks through implementator subagents
+   - Run verification after each task
+   - Perform comprehensive reviews at milestones
+   - Report completion with next steps
+
+3. **Manual alternatives:**
+   - Review the plan manually
+   - Implement tasks one at a time
+   - Run verify-task after each task
+   - Run verify-milestone after completing milestones

@@ -130,7 +130,10 @@ run_baseline_tests() {
                 (
                     cd "$worktree_path"
                     # Run tests with --passWithNoTests to handle projects without tests
-                    npm test -- --passWithNoTests 2>/dev/null || true
+                    if ! npm test -- --passWithNoTests 2>&1; then
+                        log_error "Baseline tests failed - environment not ready for development"
+                        return 1
+                    fi
                 )
             else
                 log_warn "No test script found in package.json"
@@ -142,7 +145,10 @@ run_baseline_tests() {
                 (
                     cd "$worktree_path"
                     # Run tests without capturing output
-                    cargo test --no-fail-fast 2>/dev/null || true
+                    if ! cargo test --no-fail-fast 2>&1; then
+                        log_error "Baseline tests failed - environment not ready for development"
+                        return 1
+                    fi
                 )
             else
                 log_warn "No tests configured in Cargo.toml"
@@ -152,13 +158,19 @@ run_baseline_tests() {
             if command -v pytest &> /dev/null; then
                 (
                     cd "$worktree_path"
-                    pytest -x -q 2>/dev/null || true
-                ) || log_warn "pytest failed or no tests found"
+                    if ! pytest -x -q 2>&1; then
+                        log_error "Baseline tests failed - environment not ready for development"
+                        return 1
+                    fi
+                )
             elif command -v python &> /dev/null; then
                 (
                     cd "$worktree_path"
-                    python -m unittest discover -s . -p 'test_*.py' -q 2>/dev/null || true
-                ) || log_warn "No tests found"
+                    if ! python -m unittest discover -s . -p 'test_*.py' -q 2>&1; then
+                        log_error "Baseline tests failed - environment not ready for development"
+                        return 1
+                    fi
+                )
             else
                 log_warn "No test runner found (pytest or unittest)"
             fi
@@ -183,7 +195,9 @@ main() {
     fi
 
     # Determine worktree path
-    local worktree_path="$WORKTREES_DIR/$(basename "$branch_name")"
+    # Strip feature/ prefix if present, then get basename to avoid unnecessary nesting
+    local clean_name="${branch_name#feature/}"
+    local worktree_path="$WORKTREES_DIR/$(basename "$clean_name")"
 
     # Check if worktree already exists
     if ! check_worktree_exists "$worktree_path"; then
@@ -212,7 +226,12 @@ main() {
     fi
 
     # Run baseline tests
-    run_baseline_tests "$worktree_path" "$project_type"
+    if ! run_baseline_tests "$worktree_path" "$project_type"; then
+        log_error "Environment validation failed, cleaning up worktree"
+        git worktree remove "$worktree_path" 2>/dev/null || true
+        git branch -D "$branch_name" 2>/dev/null || true
+        exit 1
+    fi
 
     # Output worktree path as last line for programmatic use
     echo "$worktree_path"

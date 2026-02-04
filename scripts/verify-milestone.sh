@@ -1,6 +1,6 @@
 #!/bin/bash
 
-set -e
+set -uo pipefail
 
 # Colors for output
 RED='\033[0;31m'
@@ -17,6 +17,8 @@ SECURITY_PASS=true
 BRANCH_CLEAN=true
 COVERAGE_PASS=true
 COVERAGE_AVAILABLE=false
+RUNTIME_PASS="SKIPPED"
+RUNTIME_OUTPUT=""
 
 # Output functions
 pass() { echo -e "${GREEN}✅ PASS${NC}"; }
@@ -109,6 +111,29 @@ case "$PROJECT_TYPE" in
         else
             COVERAGE_PASS=false
             COVERAGE_OUTPUT=$(cat /tmp/coverage_output.txt | tail -20)
+        fi
+
+        echo ""
+        echo "=== Runtime Verification (Non-blocking) ==="
+        if grep -q '"dev"' package.json; then
+            # Try to start dev server and check if it listens (with timeout)
+            if timeout 15 npm run dev > /tmp/dev_output.txt 2>&1; then
+                # Check if server started successfully
+                if grep -qi "listen\|ready\|started" /tmp/dev_output.txt; then
+                    RUNTIME_PASS="PASS"
+                    RUNTIME_OUTPUT="Application started successfully"
+                else
+                    RUNTIME_PASS="FAIL"
+                    RUNTIME_OUTPUT="Server started but no ready signal detected"
+                fi
+            else
+                # Timeout or failure - this is OK for non-blocking check
+                RUNTIME_PASS="FAIL"
+                RUNTIME_OUTPUT="Failed to start dev server (timeout or error)"
+            fi
+        else
+            echo "No dev script found, skipping runtime check..."
+            RUNTIME_OUTPUT="No dev script found"
         fi
         ;;
 
@@ -308,6 +333,21 @@ if [ "$COVERAGE_AVAILABLE" = true ]; then
 else
     echo "### Coverage: N/A (not available)"
 fi
+echo ""
+# Runtime check (non-blocking)
+if [ "$RUNTIME_PASS" = "PASS" ]; then
+    echo "### Runtime Check: $(pass)"
+elif [ "$RUNTIME_PASS" = "FAIL" ]; then
+    echo "### Runtime Check: $(warn) (non-blocking)"
+else
+    echo "### Runtime Check: ⏭️  SKIPPED"
+fi
+if [ -n "$RUNTIME_OUTPUT" ]; then
+    echo "$RUNTIME_OUTPUT"
+fi
+echo ""
+echo "### Browser Testing: ⏳ PENDING"
+echo "For comprehensive browser testing, run: /shared:browser-verification"
 echo ""
 echo "### Milestone Readiness: $([ "$ALL_PASS" = true ] && echo -e "${GREEN}✅ READY${NC}" || echo -e "${RED}❌ NOT READY${NC}")"
 echo ""

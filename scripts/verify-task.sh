@@ -4,7 +4,7 @@
 # Runs build, test, lint, and security checks after each task
 # Exit code: 0 = pass, 1 = fail
 
-set -e
+set -uo pipefail
 
 # Colors for output
 RED='\033[0;31m'

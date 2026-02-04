@@ -1,6 +1,6 @@
 ---
 name: executor
-description: Orchestrates plan execution through subagent coordination and systematic verification
+description: Execute a development plan from start to finish. Use when user has a plan with milestones/tasks and wants automated implementation with verification checkpoints. Automatically coordinates subagents, runs tests, and ensures quality gates.
 ---
 
 # Executor Skill

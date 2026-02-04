@@ -1,7 +1,7 @@
 {
   "name": "shared",
   "description": "My development workflow for Claude",
-  "version": "1.2.3",
+  "version": "1.2.4",
   "author": {
     "name": "Jesse Buitenhuis",
     "email": "jessebuitenhuis@gmail.com"
