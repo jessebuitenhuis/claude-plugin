@@ -1,10 +1,4 @@
 {
   "name": "shared",
-  "description": "My development workflow for Claude",
-  "version": "1.2.9",
-  "author": {
-    "name": "Jesse Buitenhuis",
-    "email": "jessebuitenhuis@gmail.com"
-  },
-  "hooks": "./hooks/hooks.json"
+  "description": "My development workflow for Claude"
 }
