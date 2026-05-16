@@ -7,7 +7,7 @@
   "plugins": [
     {
       "name": "shared",
-      "source": ".",
+      "source": "./plugins/shared",
       "description": "My development workflow for Claude",
       "author": {
         "name": "Jesse Buitenhuis",
