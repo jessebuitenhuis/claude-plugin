@@ -72,6 +72,10 @@
 - **Persist durable knowledge in the repo** (CLAUDE.md, ADRs, specs) rather than in external memory.
 - **Fix root causes, not symptoms.** When lint, types, or tests fail, address the underlying issue rather than bypassing the check.
 
+## Self-learning
+
+- When a generalisable principle emerges in a session, offer to invoke capture-learning. Don't wait to be asked.
+
 ## When in doubt
 
 Prefer the smaller, named, isolated, tested version. The cost of splitting a file you didn't need to split is zero. The cost of leaving a god-file is paid every time someone reads it.
