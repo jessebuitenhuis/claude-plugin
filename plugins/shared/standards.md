@@ -34,6 +34,9 @@
 - **Repository / mapper patterns for data access.** Keep persistence concerns out of domain code.
 - **Thin controllers.** Route and request handlers parse input (form data, query params, body) and map results to responses (status codes, JSON). Business logic belongs in a named service.
 - **Introduce abstractions on demand.** Don't add state libraries, caches, or layers "just in case" — wait until the second concrete use.
+- **Name the use-case layer.** When a behaviour composes two domains, it is itself a responsibility — give it a home above the domains (a package, a service, a named use case). If it has no home, it defaults into the app and the app's transport layer grows a god-file.
+- **DIP keeps domains leaf-shaped.** When domain A's use case needs domain B, A defines a port; the app wires a B-backed adapter. A still owns the orchestration. A never imports B.
+- **Subtract to find the owner.** Ask "would this behaviour still exist without X?". If yes, it belongs to the thing that remains and X is an augmentation. Use this to decide whether logic lives in a domain, in a use-case layer, or in the app.
 
 ## Testing
 

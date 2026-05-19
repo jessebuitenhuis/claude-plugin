@@ -7,7 +7,7 @@ Audit a slice of the codebase. Ask once for scope if it isn't obvious — review
 
 Read the slice end-to-end before generalising. Look through these lenses:
 
-- **Responsibility** — what each module owns, what's owned in the wrong place.
+- **Responsibility** — what each module owns, what's owned in the wrong place. Apply the subtract test: would this still exist without X?
 - **Dependencies** — imports pointing the wrong way, cycles, domain reaching into transport, sibling-package coupling.
 - **Duplication** — parallel implementations that should converge.
 - **Hotspots** — where churn or repeated bugs say the design is fighting the work.
