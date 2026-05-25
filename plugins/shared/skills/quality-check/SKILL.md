@@ -24,3 +24,5 @@ For each layer: **present** / **partial** / **missing**, with a one-line note on
 Then — for anything partial or missing — propose what to add and why, framed as a suggestion the user can accept, skip, or defer. Explain the tradeoff if skipping has a real cost. Ask which gaps they want to address and offer to implement them.
 
 Don't apply any changes before the user confirms.
+
+When generating or reviewing config, apply the known pitfalls documented in [pitfalls.md](./pitfalls.md).
