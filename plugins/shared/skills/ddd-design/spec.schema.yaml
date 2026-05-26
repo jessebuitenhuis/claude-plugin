@@ -1,0 +1,235 @@
+$schema: "https://json-schema.org/draft/2020-12/schema"
+title: Domain Spec
+description: >
+  Behavioral spec for a bounded context in the event-sourced domain abstraction.
+  Behavior only — no implementation choices.
+type: object
+required: [context]
+properties:
+  context:
+    $ref: "#/$defs/context"
+
+$defs:
+  context:
+    type: object
+    required: [name, description, aggregates]
+    additionalProperties: false
+    properties:
+      name:
+        type: string
+      description:
+        type: string
+      workflows:
+        type: array
+        items:
+          $ref: "#/$defs/workflow"
+      aggregates:
+        type: array
+        items:
+          $ref: "#/$defs/aggregate"
+
+  workflow:
+    type: object
+    required: [name, description, behavior]
+    additionalProperties: false
+    properties:
+      name:
+        type: string
+      description:
+        type: string
+      behavior:
+        type: array
+        items:
+          type: object
+          required: [given, when, then]
+          additionalProperties: false
+          properties:
+            given:
+              type: string
+            when:
+              type: string
+            then:
+              type: string
+
+  aggregate:
+    type: object
+    required: [name, purpose, invariants, initial_state, states, transitions, operations]
+    additionalProperties: false
+    properties:
+      name:
+        type: string
+      purpose:
+        type: string
+      invariants:
+        type: array
+        items:
+          type: string
+      initial_state:
+        description: >
+          The state the aggregate starts in before any commands are applied.
+          Use null when the aggregate does not exist until explicitly created.
+        oneOf:
+          - type: "null"
+          - type: string
+      states:
+        type: array
+        items:
+          $ref: "#/$defs/state"
+      transitions:
+        type: array
+        items:
+          $ref: "#/$defs/transition"
+      operations:
+        type: array
+        items:
+          $ref: "#/$defs/operation"
+
+  state:
+    type: object
+    required: [name, meaning]
+    additionalProperties: false
+    properties:
+      name:
+        type: string
+      meaning:
+        type: string
+      data:
+        type: array
+        items:
+          $ref: "#/$defs/dataField"
+
+  transition:
+    type: object
+    required: [from, to, description]
+    additionalProperties: false
+    properties:
+      from:
+        $ref: "#/$defs/stateRef"
+      excludes:
+        type: array
+        items:
+          type: string
+      to:
+        $ref: "#/$defs/stateRef"
+      description:
+        type: string
+
+  operation:
+    description: >
+      'validFrom' and 'excludes' express state legality — which states the
+      operation may run from. 'guards' express runtime data conditions that
+      must hold beyond state legality. Keep these distinct: state checks belong
+      in 'validFrom'/'excludes', data checks belong in 'guards'.
+    type: object
+    required: [name, intent, validFrom, command, events, transitionsTo]
+    additionalProperties: false
+    properties:
+      name:
+        type: string
+      intent:
+        type: string
+      validFrom:
+        $ref: "#/$defs/validFrom"
+      excludes:
+        description: Only meaningful with 'validFrom: any' — subtracts specific states from the full set.
+        type: array
+        items:
+          type: string
+      guards:
+        type: array
+        items:
+          type: object
+          required: [condition]
+          additionalProperties: false
+          properties:
+            condition:
+              type: string
+      command:
+        $ref: "#/$defs/commandRef"
+      events:
+        $ref: "#/$defs/eventList"
+      transitionsTo:
+        description: >
+          Target state after the operation. Use a named state, or 'none' if the
+          operation records a fact without changing state.
+        type: string
+
+  validFrom:
+    description: >
+      'null' = item must not exist yet (creation only).
+      'any' = any existing state; combine with top-level 'excludes' to restrict.
+      A string or list of strings = specific named states.
+    oneOf:
+      - type: "null"
+      - type: string
+      - type: array
+        items:
+          type: string
+
+  commandRef:
+    description: >
+      Use a bare string when the command carries no payload beyond the implied
+      aggregate id. Use an object with 'name' and 'data' when it carries
+      additional fields.
+    oneOf:
+      - type: string
+      - type: object
+        required: [name]
+        additionalProperties: false
+        properties:
+          name:
+            type: string
+          data:
+            type: array
+            items:
+              $ref: "#/$defs/dataField"
+
+  eventList:
+    description: >
+      A list of events. Use bare strings when events carry no payload. Use
+      objects with 'name' (and optionally 'data' and 'note') when they do.
+      Both forms may appear in the same list.
+    type: array
+    items:
+      $ref: "#/$defs/eventRef"
+
+  eventRef:
+    description: >
+      Events are thin — they carry the delta (what changed), not the full
+      resulting state. The evolver is responsible for carrying unchanged state
+      forward. Use a bare string when the event carries no payload beyond the
+      implied aggregate id. Use an object with 'name' when it carries
+      additional fields or a note.
+    oneOf:
+      - type: string
+      - type: object
+        required: [name]
+        additionalProperties: false
+        properties:
+          name:
+            type: string
+          data:
+            type: array
+            items:
+              $ref: "#/$defs/dataField"
+          note:
+            type: string
+
+  dataField:
+    description: >
+      Use a bare string when the field name is self-explanatory. Use a
+      single-key object { fieldName: 'description' } when the field needs
+      clarification.
+    oneOf:
+      - type: string
+      - type: object
+        minProperties: 1
+        maxProperties: 1
+
+  stateRef:
+    description: A state name, a list of state names, or 'any' to mean all states.
+    oneOf:
+      - type: string
+      - type: array
+        items:
+          type: string
