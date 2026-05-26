@@ -131,7 +131,7 @@ $defs:
       validFrom:
         $ref: "#/$defs/validFrom"
       excludes:
-        description: Only meaningful with 'validFrom: any' — subtracts specific states from the full set.
+        description: "Only meaningful with 'validFrom: any' — subtracts specific states from the full set."
         type: array
         items:
           type: string
