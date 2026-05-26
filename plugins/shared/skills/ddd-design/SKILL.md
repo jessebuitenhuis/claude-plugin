@@ -33,8 +33,14 @@ split them.
 a named situation — not a flag, not a field, but a mode that changes which operations
 are legal. If an operation is only valid "when X is true", X is probably a state.
 
-**5. Find the workflows.** When an event in one aggregate should trigger a command on
-another, that's a workflow. Name it, describe its behavior in given/when/then terms.
+**5. Find the reactors.** When an event should immediately produce one or more commands
+and the decision is based purely on data already in the event, that's a reactor — not a
+workflow. A reactor has no state and makes no external queries. Name it, list the commands
+it emits, and add a `when` condition only where the event data drives a branch.
+
+**6. Find the workflows.** When a cross-aggregate reaction needs state, involves multiple
+steps, or requires data beyond the triggering event, that's a workflow. Name it, describe
+its behavior in given/when/then terms.
 
 ---
 

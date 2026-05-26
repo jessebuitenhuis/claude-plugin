@@ -26,11 +26,58 @@ $defs:
         type: array
         items:
           $ref: "#/$defs/workflow"
+      reactors:
+        description: >
+          Stateless event listeners that dispatch commands based solely on event data.
+          No external queries, no aggregate state — only fields carried by the triggering event.
+        type: array
+        items:
+          $ref: "#/$defs/reactor"
       aggregates:
         description: The consistency boundaries that own state and enforce invariants in this context.
         type: array
         items:
           $ref: "#/$defs/aggregate"
+
+  reactor:
+    type: object
+    required: [name, description, on, emit]
+    additionalProperties: false
+    properties:
+      name:
+        description: Short camelCase name (e.g. notifyCreatorOnCompletion, routeOrderOnPlacement).
+        type: string
+      description:
+        description: The business rule this reaction encodes and why it exists.
+        type: string
+      on:
+        description: The event type that triggers this reactor.
+        type: string
+      emit:
+        description: Commands to dispatch, each with an optional condition on event data.
+        type: array
+        minItems: 1
+        items:
+          $ref: "#/$defs/reactorEmit"
+
+  reactorEmit:
+    type: object
+    required: [name]
+    additionalProperties: false
+    properties:
+      name:
+        description: Command name to dispatch.
+        type: string
+      data:
+        description: Payload fields from the event to forward.
+        type: array
+        items:
+          $ref: "#/$defs/dataField"
+      when:
+        description: >
+          Plain-English condition on event data only. Omit for unconditional emission.
+          No external queries, no aggregate state.
+        type: string
 
   workflow:
     type: object
