@@ -56,3 +56,20 @@ another, that's a workflow. Name it, describe its behavior in given/when/then te
 
 A `<name>.spec.yaml` file conforming to `spec.schema.yaml`. Behavior only — no
 implementation choices, no file paths, no type names.
+
+---
+
+## Review loop
+
+After writing the spec, spawn an **independent subagent** to review it. Give the
+reviewer the schema and the spec, and ask it to surface ambiguities, unclarities,
+and gaps in the domain model — places where the spec leaves a reader guessing, where
+a term is overloaded, where a state machine has unreachable states or missing paths,
+or where an invariant could silently be violated. The reviewer should report findings
+only, no praise or suggestions.
+
+Present the findings to the user and agree on which to fix. Apply the fixes, then
+propose another round with a fresh independent reviewer. You may briefly tell the new
+reviewer which issues were already addressed (by name only, no detail) so they can
+focus energy on open ground. Repeat until a round comes back clean or the user is
+satisfied.
