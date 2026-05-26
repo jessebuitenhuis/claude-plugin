@@ -16,14 +16,18 @@ $defs:
     additionalProperties: false
     properties:
       name:
+        description: Short PascalCase identifier for the bounded context (e.g. WorkManagement, Billing).
         type: string
       description:
+        description: One or two sentences on what this context is responsible for and why it exists.
         type: string
       workflows:
+        description: Cross-aggregate or cross-context flows that coordinate behavior without owning state.
         type: array
         items:
           $ref: "#/$defs/workflow"
       aggregates:
+        description: The consistency boundaries that own state and enforce invariants in this context.
         type: array
         items:
           $ref: "#/$defs/aggregate"
@@ -34,10 +38,13 @@ $defs:
     additionalProperties: false
     properties:
       name:
+        description: Short camelCase or PascalCase name for the workflow (e.g. dependency, escalation).
         type: string
       description:
+        description: What this workflow coordinates and why it needs to exist above the aggregate level.
         type: string
       behavior:
+        description: Acceptance scenarios (given/when/then) that fully specify the workflow's observable behavior.
         type: array
         items:
           type: object
@@ -45,10 +52,13 @@ $defs:
           additionalProperties: false
           properties:
             given:
+              description: The pre-condition or starting state for this scenario.
               type: string
             when:
+              description: The event or command that triggers the workflow step.
               type: string
             then:
+              description: The observable outcome that must follow.
               type: string
 
   aggregate:
@@ -57,10 +67,13 @@ $defs:
     additionalProperties: false
     properties:
       name:
+        description: Short PascalCase identifier for the aggregate (e.g. WorkItem, Invoice).
         type: string
       purpose:
+        description: One sentence on what this aggregate is responsible for protecting — its core business rule.
         type: string
       invariants:
+        description: Rules that must always hold regardless of which operation ran. Express as plain-English assertions.
         type: array
         items:
           type: string
@@ -72,14 +85,17 @@ $defs:
           - type: "null"
           - type: string
       states:
+        description: All named states the aggregate can be in. Each state has a name and a business meaning.
         type: array
         items:
           $ref: "#/$defs/state"
       transitions:
+        description: Allowed state changes. Only transitions listed here are legal — anything else is implicitly forbidden.
         type: array
         items:
           $ref: "#/$defs/transition"
       operations:
+        description: Commands this aggregate can handle, each with its preconditions, events emitted, and resulting state.
         type: array
         items:
           $ref: "#/$defs/operation"
@@ -90,10 +106,13 @@ $defs:
     additionalProperties: false
     properties:
       name:
+        description: Unique identifier for this state within the aggregate (e.g. open, closed, cancelled).
         type: string
       meaning:
+        description: What it means for the aggregate to be in this state — the business significance, not the mechanics.
         type: string
       data:
+        description: Fields that exist on the aggregate while it is in this state.
         type: array
         items:
           $ref: "#/$defs/dataField"
@@ -104,14 +123,18 @@ $defs:
     additionalProperties: false
     properties:
       from:
+        description: The source state(s) this transition starts from.
         $ref: "#/$defs/stateRef"
       excludes:
+        description: States to subtract when 'from' is 'any'. Lists the states this transition may NOT start from.
         type: array
         items:
           type: string
       to:
+        description: The target state this transition leads to.
         $ref: "#/$defs/stateRef"
       description:
+        description: Why this transition exists — the business event or decision that causes it.
         type: string
 
   operation:
@@ -125,8 +148,10 @@ $defs:
     additionalProperties: false
     properties:
       name:
+        description: Short camelCase identifier for the operation (e.g. complete, assignTo, reopen).
         type: string
       intent:
+        description: One sentence describing the business intent — what the user or system is trying to achieve.
         type: string
       validFrom:
         $ref: "#/$defs/validFrom"
@@ -136,6 +161,7 @@ $defs:
         items:
           type: string
       guards:
+        description: Runtime data conditions checked after state legality. Use only for data-driven rules, not state checks.
         type: array
         items:
           type: object
@@ -143,6 +169,7 @@ $defs:
           additionalProperties: false
           properties:
             condition:
+              description: Plain-English assertion that must be true for the operation to proceed (e.g. "assignee exists").
               type: string
       command:
         $ref: "#/$defs/commandRef"
@@ -178,8 +205,10 @@ $defs:
         additionalProperties: false
         properties:
           name:
+            description: Name of the command (e.g. CompleteWorkItem, AssignTo).
             type: string
           data:
+            description: Payload fields the command carries beyond the aggregate id.
             type: array
             items:
               $ref: "#/$defs/dataField"
@@ -207,12 +236,15 @@ $defs:
         additionalProperties: false
         properties:
           name:
+            description: Name of the event in past tense (e.g. WorkItemCompleted, AssigneeChanged).
             type: string
           data:
+            description: Fields carried by this event — only the delta, not the full state.
             type: array
             items:
               $ref: "#/$defs/dataField"
           note:
+            description: Optional clarification about why this event exists or what makes it distinct.
             type: string
 
   dataField:
