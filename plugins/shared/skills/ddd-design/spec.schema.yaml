@@ -123,16 +123,24 @@ $defs:
     additionalProperties: false
     properties:
       from:
-        description: The source state(s) this transition starts from.
-        $ref: "#/$defs/stateRef"
+        description: "The source state(s) for this transition. Use a state name, a list of state names, or 'any'."
+        oneOf:
+          - type: string
+          - type: array
+            items:
+              type: string
       excludes:
         description: States to subtract when 'from' is 'any'. Lists the states this transition may NOT start from.
         type: array
         items:
           type: string
       to:
-        description: The target state this transition leads to.
-        $ref: "#/$defs/stateRef"
+        description: "The target state this transition leads to. Use a state name or a list of state names."
+        oneOf:
+          - type: string
+          - type: array
+            items:
+              type: string
       description:
         description: Why this transition exists — the business event or decision that causes it.
         type: string
@@ -220,32 +228,31 @@ $defs:
       Both forms may appear in the same list.
     type: array
     items:
-      $ref: "#/$defs/eventRef"
+      oneOf:
+        - type: string
+          description: Bare event name when the event carries no payload.
+        - $ref: "#/$defs/eventRef"
 
   eventRef:
     description: >
       Events are thin — they carry the delta (what changed), not the full
       resulting state. The evolver is responsible for carrying unchanged state
-      forward. Use a bare string when the event carries no payload beyond the
-      implied aggregate id. Use an object with 'name' when it carries
-      additional fields or a note.
-    oneOf:
-      - type: string
-      - type: object
-        required: [name]
-        additionalProperties: false
-        properties:
-          name:
-            description: Name of the event in past tense (e.g. WorkItemCompleted, AssigneeChanged).
-            type: string
-          data:
-            description: Fields carried by this event — only the delta, not the full state.
-            type: array
-            items:
-              $ref: "#/$defs/dataField"
-          note:
-            description: Optional clarification about why this event exists or what makes it distinct.
-            type: string
+      forward.
+    type: object
+    required: [name]
+    additionalProperties: false
+    properties:
+      name:
+        description: Name of the event in past tense (e.g. WorkItemCompleted, AssigneeChanged).
+        type: string
+      data:
+        description: Fields carried by this event — only the delta, not the full state.
+        type: array
+        items:
+          $ref: "#/$defs/dataField"
+      note:
+        description: Optional clarification about why this event exists or what makes it distinct.
+        type: string
 
   dataField:
     description: >
