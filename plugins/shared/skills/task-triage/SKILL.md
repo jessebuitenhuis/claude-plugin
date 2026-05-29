@@ -13,15 +13,16 @@ Start immediately — no confirmation needed.
 
 ## Phase 2 — Classify
 
-Make three decisions per task:
+Make three decisions per task. **Ownership is the assignee, readiness is the status — not labels.**
 
-**Assignee**
-- `agent` — AI can execute it independently: spec is complete, no external dependencies, no judgment calls, no physical actions.
-- `jesse` — requires human judgment, a physical action, personal context, or input only Jesse can provide.
+**Assignee (who executes it)**
+- `AusAgent` — the AI agent can execute it independently: spec is complete, no external dependencies, no judgment calls, no physical actions.
+- `Jesse` — requires human judgment, a physical action, personal context, or input only Jesse can provide.
 
-**Readiness**
-- `Todo` — enough context to act on right now.
-- `Backlog` + label `needs-elaboration` — scope unclear, spec missing, or more context needed before work can start.
+**Readiness (status)**
+- `Todo` — ready to pick up right now (by an agent or by Jesse).
+- `Refine` — chosen to do, but the scope is unclear, the spec is missing, or more context is needed before work can start.
+- `Backlog` — just an idea, not yet chosen to do.
 
 **Cancel?**
 - `Canceled` when: the project is archived, the task is no longer relevant, or it has no remaining value.
@@ -45,9 +46,10 @@ Collect all final decisions before writing anything.
 
 ## Phase 5 — Execute
 
-1. Ensure labels `agent`, `jesse`, and `needs-elaboration` exist; create any that are missing.
-2. Apply all status changes, assignee labels, and cancellations in bulk.
-3. Confirm: how many tasks updated, canceled, and labeled `needs-elaboration`.
+1. Apply all status changes, assignee changes, and cancellations in bulk via `save_issue`.
+2. Confirm: how many tasks moved to `Todo`, `Refine`, `Backlog`, and how many canceled.
+
+Note: statuses cannot be created via the Linear MCP — if `Refine` (or any needed status) is missing, tell Jesse the Settings path to add it (Settings → Team → Workflow).
 
 ---
 
