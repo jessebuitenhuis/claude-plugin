@@ -24,7 +24,9 @@ The command validates the model before writing anything:
 - **cross-references** via the integrity checks (`src/integrity`) — every event,
   state, guard, command, context and flow step must resolve
 
-On any failure it prints the offending locations and writes nothing.
+On any failure it prints the offending locations (by named id, e.g.
+`contexts[work_item_management].classification.domain`) and writes nothing. Run
+`npm run generate -- --help` for usage.
 
 ## Model layout
 
@@ -47,12 +49,15 @@ model/
 
 ## Output layout
 
+Directory and file names are slugged (e.g. `work_item_management` →
+`work-item-management`); identity still comes from `id:` in the model.
+
 ```
 generated/
   context-map.md
-  <context-id>/
+  <context>/
     bounded-context.md
-    <aggregate-id>.aggregate.md  # aggregate design canvas + example map
+    <aggregate>.aggregate.md     # aggregate design canvas + example map
     event-model-slices.md
   flows/
     <flow-name>.md

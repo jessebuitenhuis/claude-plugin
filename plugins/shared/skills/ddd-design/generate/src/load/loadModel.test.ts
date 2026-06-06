@@ -33,7 +33,7 @@ describe("loadModel (example model)", () => {
   it("projects one file per canvas and none for stub contexts", () => {
     const paths = renderModel(model).map((file) => file.path);
     expect(paths).toContain("context-map.md");
-    expect(paths).toContain("work_item_management/issue.aggregate.md");
+    expect(paths).toContain("work-item-management/issue.aggregate.md");
     expect(paths).toContain("flows/drive-an-issue-from-start-to-done.md");
     expect(paths.some((path) => path.startsWith("planning/"))).toBe(false);
   });

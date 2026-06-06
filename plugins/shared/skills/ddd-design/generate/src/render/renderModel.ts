@@ -25,14 +25,14 @@ const withHeader = (file: OutputFile): OutputFile => ({
 });
 
 const aggregateFile = (context: Context, aggregate: Aggregate): OutputFile => ({
-  path: `${context.id}/${aggregate.id}.aggregate.md`,
+  path: `${slug(context.id)}/${slug(aggregate.id)}.aggregate.md`,
   content: `${aggregateDesignCanvas(aggregate)}\n\n${exampleMap(aggregate)}`,
 });
 
 const contextFiles = (context: Context): OutputFile[] => [
-  { path: `${context.id}/bounded-context.md`, content: boundedContextCanvas(context) },
+  { path: `${slug(context.id)}/bounded-context.md`, content: boundedContextCanvas(context) },
   ...context.aggregates.map((aggregate) => aggregateFile(context, aggregate)),
-  { path: `${context.id}/event-model-slices.md`, content: eventModelSlices(context) },
+  { path: `${slug(context.id)}/event-model-slices.md`, content: eventModelSlices(context) },
 ];
 
 export const renderModel = (model: DomainModel): OutputFile[] =>
