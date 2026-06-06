@@ -8,7 +8,7 @@ const withCommands = (commandIds: string[]) =>
     name: "Issue",
     description: "an issue",
     initial: "open",
-    states: [{ id: "open", name: "Open", category: "started" }],
+    states: [{ id: "open", name: "Open" }],
     commands: commandIds.map((id) => ({ id })),
     events: [{ id: "Closed" }],
     transitions: [{ from: "open", command: "CloseIssue", produces: ["Closed"], to: "open" }],

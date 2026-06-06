@@ -8,25 +8,18 @@ initial: triage
 states:
   - id: triage
     name: Triage
-    category: triage
   - id: backlog
     name: Backlog
-    category: backlog
   - id: todo
     name: Todo
-    category: unstarted
   - id: in_progress
     name: In Progress
-    category: started
   - id: in_review
     name: In Review
-    category: started
   - id: done
     name: Done
-    category: completed
   - id: canceled
     name: Canceled
-    category: canceled
 
 commands:
   - id: CreateIssue
@@ -170,7 +163,7 @@ examples:
     then:
       - IssueMarkedDuplicate
       - IssueCanceled
-      - ENG-50 is in the Canceled category
+      - ENG-50 is in the Canceled state
   - name: The One Where The Parent Finishes Early
     given: parent issue ENG-1 with an open sub-issue ENG-2
     when: CompleteIssue

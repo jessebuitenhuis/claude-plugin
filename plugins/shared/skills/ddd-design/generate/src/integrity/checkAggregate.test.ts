@@ -8,7 +8,7 @@ const build = (overrides: Record<string, unknown>) =>
     name: "Issue",
     description: "an issue",
     initial: "open",
-    states: [{ id: "open", name: "Open", category: "started" }],
+    states: [{ id: "open", name: "Open" }],
     commands: [{ id: "Close" }],
     events: [{ id: "Closed" }],
     ...overrides,

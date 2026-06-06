@@ -22,9 +22,6 @@ language:
   - term: WorkflowState
     kind: entity
     definition: A named status an issue occupies (owned by Workflow Configuration)
-  - term: StateCategory
-    kind: value-object
-    definition: Semantic bucket triage/backlog/unstarted/started/completed/canceled
   - term: Relation
     kind: value-object
     definition: blocks / blocked-by / duplicate-of / related-to

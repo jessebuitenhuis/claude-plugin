@@ -5,23 +5,6 @@ import { bullets } from "../markdown/bullets.ts";
 import { code, codeList } from "../markdown/code.ts";
 import { table } from "../markdown/table.ts";
 
-/** Groups state names under their category, in the order categories first appear. */
-const statesByCategory = (aggregate: Aggregate): Map<string, string[]> => {
-  const groups = new Map<string, string[]>();
-  for (const state of aggregate.states) {
-    if (!state.category) continue;
-    const names = groups.get(state.category) ?? [];
-    names.push(state.name);
-    groups.set(state.category, names);
-  }
-  return groups;
-};
-
-const categoriesLine = (aggregate: Aggregate): string =>
-  [...statesByCategory(aggregate)]
-    .map(([category, names]) => `${category}: ${names.join(", ")}`)
-    .join("  →  ");
-
 const transitionRows = (aggregate: Aggregate): string[][] =>
   aggregate.transitions.map((t) => [
     stateName(aggregate, t.from),
@@ -30,12 +13,6 @@ const transitionRows = (aggregate: Aggregate): string[][] =>
     code(t.produces.join(" / ")),
     stateName(aggregate, t.to),
   ]);
-
-const stateTransitions = (aggregate: Aggregate): string => {
-  const categories = categoriesLine(aggregate);
-  const heading = categories ? `Categories: ${categories}\n\n` : "";
-  return `${heading}${table(["From", "Command", "Guards", "Event", "To"], transitionRows(aggregate))}`;
-};
 
 const apiRows = (aggregate: Aggregate): string[][] =>
   [...eventsByCommand(aggregate)].map(([command, events]) => [
@@ -66,7 +43,7 @@ ${aggregate.name}
 ${aggregate.description.trim()}
 
 ### 3. State Transitions
-${stateTransitions(aggregate)}
+${table(["From", "Command", "Guards", "Event", "To"], transitionRows(aggregate))}
 
 ### 4. Enforced Invariants
 _Always-true constraints over aggregate state; verified after applying a command._

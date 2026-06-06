@@ -70,8 +70,7 @@ independently, split them.
 **4. Discover states, then split lifecycle from attributes.** Ask what the
 aggregate _is_ at any point — a named situation that changes which operations
 are legal. A command that moves the aggregate between states is a **transition**;
-a command that records a fact without changing state is an **operation**. Tag
-each state with a category so the aggregate canvas can lay out the lifecycle.
+a command that records a fact without changing state is an **operation**.
 
 **5. Separate invariants from guards.** An **invariant** is always true over the
 state and is verified _after_ a command. A **guard** is a precondition checked
