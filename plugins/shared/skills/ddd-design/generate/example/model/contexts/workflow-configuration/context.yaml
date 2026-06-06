@@ -1,0 +1,6 @@
+id: workflow_configuration
+name: Workflow Configuration
+classification:
+  domain: supporting
+  businessModel: Customisation
+  evolution: product

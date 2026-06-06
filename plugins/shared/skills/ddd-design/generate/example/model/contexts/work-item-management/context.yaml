@@ -1,0 +1,50 @@
+id: work_item_management
+name: Work Item Management
+classification:
+  domain: core
+  businessModel: Engagement creator
+  evolution: product
+
+purpose: >
+  Lets teams capture, organise and drive units of work from intake to a
+  terminal outcome. Serves the reporter, the assignee and the team lead.
+
+roles:
+  - Execution context — enforces a workflow and state machine
+
+language:
+  - term: Issue
+    kind: aggregate
+    definition: A unit of work tracked from creation to a terminal outcome
+  - term: Identifier
+    kind: value-object
+    definition: Human-readable handle TEAM-123, assigned once at creation
+  - term: WorkflowState
+    kind: entity
+    definition: A named status an issue occupies (owned by Workflow Configuration)
+  - term: Relation
+    kind: value-object
+    definition: blocks / blocked-by / duplicate-of / related-to
+
+actors:
+  - id: reporter
+    kind: role
+    definition: The person who created or requested the issue.
+  - id: member
+    kind: role
+    definition: A person on the issue's team who can act on it.
+  - id: assignee
+    kind: role
+    definition: The single member currently responsible for the issue.
+  - id: reviewer
+    kind: role
+    definition: A member reviewing an issue that is In Review.
+  - id: project_manager
+    kind: role
+    definition: Oversees a project; may triage, reassign or close issues across the team.
+  - id: github
+    kind: system
+    definition: External VCS; opening or merging a PR can drive issue transitions.
+  - id: email_intake
+    kind: system
+    definition: Inbound email gateway that creates triage issues.

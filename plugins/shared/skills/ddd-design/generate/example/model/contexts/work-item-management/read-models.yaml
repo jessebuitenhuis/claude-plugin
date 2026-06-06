@@ -1,0 +1,28 @@
+readModels:
+  - id: TeamBoard
+    description: All of a team's issues grouped by workflow state (incl. review, done, canceled).
+    folds:
+      - IssueCreated
+      - IssueAccepted
+      - IssueStarted
+      - IssueMovedToReview
+      - IssueCompleted
+      - IssueCanceled
+      - IssueReopened
+      - IssueAssigned
+  - id: MyIssues
+    description: Issues assigned to the current member, each showing its current state — todo, in progress, in review, done or canceled.
+    folds:
+      - IssueAssigned
+      - IssueStarted
+      - IssueMovedToReview
+      - IssueCompleted
+      - IssueCanceled
+      - IssueReopened
+  - id: TriageQueue
+    description: Issues awaiting acceptance, with those declined or merged removed.
+    folds:
+      - IssueCreated
+      - IssueAccepted
+      - IssueDeclined
+      - IssueMarkedDuplicate

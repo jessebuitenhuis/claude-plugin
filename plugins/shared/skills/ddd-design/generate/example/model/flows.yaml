@@ -1,0 +1,17 @@
+flows:
+  - name: Drive an issue from start to done
+    trigger: Assignee acts on the Team Board (UI)
+    steps:
+      - transition:
+          command: StartIssue
+          from: todo
+        readModel: MyIssues
+      - transition:
+          command: SubmitForReview
+          from: in_progress
+      - reaction: rx_notify_review
+      - transition:
+          command: CompleteIssue
+          from: in_review
+        readModel: TeamBoard
+      - reaction: rx_cycle_progress

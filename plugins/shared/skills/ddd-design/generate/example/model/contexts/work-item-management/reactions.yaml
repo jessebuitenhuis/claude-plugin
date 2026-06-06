@@ -1,0 +1,10 @@
+reactions:
+  - id: rx_cycle_progress
+    whenEvent: IssueCompleted
+    condition: issue in active cycle
+    thenCommand: RecordCycleProgress
+    inContext: planning
+  - id: rx_notify_review
+    whenEvent: IssueMovedToReview
+    thenCommand: NotifyReviewers
+    inContext: collaboration
