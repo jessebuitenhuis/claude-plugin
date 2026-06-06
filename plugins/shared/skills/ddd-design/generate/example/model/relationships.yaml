@@ -1,0 +1,21 @@
+relationships:
+  - upstream: identity_access
+    downstream: work_item_management
+    pattern: OHS/PL
+    integration: sync member/team refs
+  - upstream: workflow_configuration
+    downstream: work_item_management
+    pattern: C/S
+    integration: sync read of state defs
+  - upstream: work_item_management
+    downstream: planning
+    pattern: Partnership
+    integration: async events
+  - upstream: work_item_management
+    downstream: collaboration
+    pattern: OHS/PL
+    integration: async Issue* events
+  - upstream: work_item_management
+    downstream: insights
+    pattern: OHS
+    integration: async event stream

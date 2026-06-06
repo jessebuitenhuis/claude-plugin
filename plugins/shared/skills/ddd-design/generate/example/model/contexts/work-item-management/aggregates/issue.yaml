@@ -1,0 +1,185 @@
+id: issue
+name: Issue
+description: >
+  Unit of work; owns its workflow position, assignment, priority,
+  estimate, hierarchy and relations. Single-issue consistency boundary.
+initial: triage
+
+states:
+  - id: triage
+    name: Triage
+    category: triage
+  - id: backlog
+    name: Backlog
+    category: backlog
+  - id: todo
+    name: Todo
+    category: unstarted
+  - id: in_progress
+    name: In Progress
+    category: started
+  - id: in_review
+    name: In Review
+    category: started
+  - id: done
+    name: Done
+    category: completed
+  - id: canceled
+    name: Canceled
+    category: canceled
+
+commands:
+  - id: CreateIssue
+  - id: AssignIssue
+  - id: AcceptIssue
+  - id: DeclineIssue
+  - id: StartIssue
+  - id: SubmitForReview
+  - id: CompleteIssue
+  - id: CancelIssue
+  - id: MarkDuplicate
+    data:
+      canonicalIssueId: string
+  - id: ReopenIssue
+  - id: SetPriority
+    data:
+      priority: Priority
+  - id: EstimateIssue
+    data:
+      points: number
+
+events:
+  - id: IssueCreated
+  - id: IssueAssigned
+  - id: IssueAccepted
+  - id: IssueDeclined
+  - id: IssueStarted
+  - id: IssueMovedToReview
+  - id: IssueCompleted
+    data:
+      completedAt: Date
+  - id: IssueCanceled
+    data:
+      canceledAt: Date
+  - id: IssueMarkedDuplicate
+    data:
+      canonicalIssueId: string
+  - id: IssueReopened
+  - id: IssuePrioritySet
+  - id: IssueEstimated
+  - id: ParentCompletedWithOpenChildren
+
+invariants:
+  - id: inv_single_assignee
+    statement: At most one assignee at any time.
+  - id: inv_state_in_workflow
+    statement: The current state always belongs to the issue's team workflow.
+  - id: inv_no_hierarchy_cycle
+    statement: An issue is never its own ancestor.
+
+guards:
+  - id: guard_canonical_exists
+    statement: The referenced canonical issue exists in the same workspace.
+  - id: guard_points_on_scale
+    statement: The estimate is a value on the team's estimation scale.
+
+correctivePolicies:
+  - whenViolated: Parent completed while sub-issues remain open
+    emits: ParentCompletedWithOpenChildren
+    rationale: Keep the aggregate at one issue instead of locking the subtree.
+
+transitions:
+  - from: triage
+    command: AcceptIssue
+    produces: [IssueAccepted]
+    to: backlog
+  - from: triage
+    command: DeclineIssue
+    produces: [IssueDeclined]
+    to: canceled
+  - from: backlog
+    command: StartIssue
+    produces: [IssueStarted]
+    to: in_progress
+  - from: todo
+    command: StartIssue
+    produces: [IssueStarted]
+    to: in_progress
+  - from: in_progress
+    command: SubmitForReview
+    produces: [IssueMovedToReview]
+    to: in_review
+  - from: in_review
+    command: CompleteIssue
+    produces: [IssueCompleted]
+    to: done
+  - from: in_progress
+    command: CompleteIssue
+    produces: [IssueCompleted]
+    to: done
+  - from: "*"
+    command: CancelIssue
+    produces: [IssueCanceled]
+    to: canceled
+  - from: "*"
+    command: MarkDuplicate
+    produces: [IssueMarkedDuplicate, IssueCanceled]
+    to: canceled
+    guards: [guard_canonical_exists]
+  - from: done
+    command: ReopenIssue
+    produces: [IssueReopened]
+    to: in_progress
+  - from: canceled
+    command: ReopenIssue
+    produces: [IssueReopened]
+    to: todo
+
+operations:
+  - command: AssignIssue
+    produces: [IssueAssigned]
+  - command: SetPriority
+    produces: [IssuePrioritySet]
+  - command: EstimateIssue
+    produces: [IssueEstimated]
+    guards: [guard_points_on_scale]
+
+examples:
+  - name: The One Where The Bug Gets Fixed
+    given: issue ENG-42 in the In Progress state
+    when: CompleteIssue
+    then:
+      - IssueCompleted
+      - completedAt is set to the current time
+      - ENG-42 no longer appears on the active board
+  - name: The One With The Email Import
+    given: issue SUP-7 in Triage
+    when: StartIssue
+    then:
+      - StartIssue is rejected — a triage issue must be accepted first
+  - name: The One Where Triage Is Accepted First
+    given: issue SUP-7 in Triage
+    when: AcceptIssue
+    then:
+      - IssueAccepted
+      - SUP-7 moves to the Backlog state
+  - name: The One With Two Identical Reports
+    rule: guard_canonical_exists
+    given: an active issue ENG-50 and a canonical issue ENG-12 in the same workspace
+    when: MarkDuplicate
+    then:
+      - IssueMarkedDuplicate
+      - IssueCanceled
+      - ENG-50 is in the Canceled category
+  - name: The One Where The Parent Finishes Early
+    given: parent issue ENG-1 with an open sub-issue ENG-2
+    when: CompleteIssue
+    then:
+      - IssueCompleted
+      - ParentCompletedWithOpenChildren
+  - name: The One With The Made-Up Estimate
+    rule: guard_points_on_scale
+    given: an issue and a team estimation scale of 1, 2, 3, 5, 8
+    when: EstimateIssue
+    then:
+      - EstimateIssue is rejected — 7 is not on the team's scale
