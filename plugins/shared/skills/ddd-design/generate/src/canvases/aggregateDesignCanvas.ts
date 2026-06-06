@@ -5,22 +5,21 @@ import { bullets } from "../markdown/bullets.ts";
 import { code, codeList } from "../markdown/code.ts";
 import { table } from "../markdown/table.ts";
 
-const CATEGORY_ORDER = [
-  "triage",
-  "backlog",
-  "unstarted",
-  "started",
-  "completed",
-  "canceled",
-] as const;
+/** Groups state names under their category, in the order categories first appear. */
+const statesByCategory = (aggregate: Aggregate): Map<string, string[]> => {
+  const groups = new Map<string, string[]>();
+  for (const state of aggregate.states) {
+    if (!state.category) continue;
+    const names = groups.get(state.category) ?? [];
+    names.push(state.name);
+    groups.set(state.category, names);
+  }
+  return groups;
+};
 
 const categoriesLine = (aggregate: Aggregate): string =>
-  CATEGORY_ORDER.map((category) => ({
-    category,
-    names: aggregate.states.filter((s) => s.category === category).map((s) => s.name),
-  }))
-    .filter((bucket) => bucket.names.length > 0)
-    .map((bucket) => `${bucket.category}: ${bucket.names.join(", ")}`)
+  [...statesByCategory(aggregate)]
+    .map(([category, names]) => `${category}: ${names.join(", ")}`)
     .join("  →  ");
 
 const transitionRows = (aggregate: Aggregate): string[][] =>
@@ -31,6 +30,12 @@ const transitionRows = (aggregate: Aggregate): string[][] =>
     code(t.produces.join(" / ")),
     stateName(aggregate, t.to),
   ]);
+
+const stateTransitions = (aggregate: Aggregate): string => {
+  const categories = categoriesLine(aggregate);
+  const heading = categories ? `Categories: ${categories}\n\n` : "";
+  return `${heading}${table(["From", "Command", "Guards", "Event", "To"], transitionRows(aggregate))}`;
+};
 
 const apiRows = (aggregate: Aggregate): string[][] =>
   [...eventsByCommand(aggregate)].map(([command, events]) => [
@@ -61,9 +66,7 @@ ${aggregate.name}
 ${aggregate.description.trim()}
 
 ### 3. State Transitions
-Categories: ${categoriesLine(aggregate)}
-
-${table(["From", "Command", "Guards", "Event", "To"], transitionRows(aggregate))}
+${stateTransitions(aggregate)}
 
 ### 4. Enforced Invariants
 _Always-true constraints over aggregate state; verified after applying a command._

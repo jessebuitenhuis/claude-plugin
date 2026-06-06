@@ -11,15 +11,6 @@ export const evolution = z.enum([
 
 export const actorKind = z.enum(["role", "system"]);
 
-export const stateCategory = z.enum([
-  "triage",
-  "backlog",
-  "unstarted",
-  "started",
-  "completed",
-  "canceled",
-]);
-
 /** Field name to plain-English type, e.g. { completedAt: "Date" }. */
 export const dataFields = z.record(z.string(), z.string());
 
