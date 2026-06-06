@@ -1,21 +1,26 @@
-import type { z } from "zod";
 import type { DomainModel } from "../schema/domainModel.ts";
-import type { flow } from "../schema/flow.ts";
+import type { Flow, FlowStep } from "../schema/flow.ts";
+import { ANY_STATE } from "../schema/primitives.ts";
 import { code } from "../markdown/code.ts";
 
-type Flow = z.infer<typeof flow>;
-type Step = Flow["steps"][number];
+type TransitionStep = Extract<FlowStep, { transition: object }>;
+
+const matchesTransition = (
+  t: { command: string; from: string },
+  command: string,
+  from: string,
+): boolean => t.command === command && (t.from === from || t.from === ANY_STATE);
 
 const transitionLine = (
   model: DomainModel,
   index: number,
-  step: Step & { transition: NonNullable<Step["transition"]> },
+  step: TransitionStep,
 ): string => {
   const { command, from } = step.transition;
   const aggregate = model.contexts
     .flatMap((context) => context.aggregates)
-    .find((a) => a.transitions.some((t) => t.command === command && t.from === from));
-  const transition = aggregate?.transitions.find((t) => t.command === command && t.from === from);
+    .find((a) => a.transitions.some((t) => matchesTransition(t, command, from)));
+  const transition = aggregate?.transitions.find((t) => matchesTransition(t, command, from));
   const read = step.readModel ? ` _(read: ${step.readModel})_` : "";
   return `${index}. **${command}** on ${code(aggregate?.id ?? "?")} → ${code(transition?.produces.join(", ") ?? "?")}${read}`;
 };
@@ -28,10 +33,10 @@ const reactionLine = (model: DomainModel, index: number, reactionId: string): st
   return `${index}. _policy_: whenever ${code(reaction?.whenEvent ?? "?")}${condition} → ${code(reaction?.thenCommand ?? "?")} _(→ ${reaction?.inContext ?? "?"})_`;
 };
 
-const stepLine = (model: DomainModel, step: Step, index: number): string => {
+const stepLine = (model: DomainModel, step: FlowStep, index: number): string => {
   const position = index + 1;
-  if (step.transition) return transitionLine(model, position, { ...step, transition: step.transition });
-  return reactionLine(model, position, step.reaction ?? "");
+  if ("transition" in step) return transitionLine(model, position, step);
+  return reactionLine(model, position, step.reaction);
 };
 
 export const eventModelFlow = (model: DomainModel, flow: Flow): string => `## Event Model — ${flow.name}

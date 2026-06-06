@@ -1,7 +1,14 @@
 import { z } from "zod";
 import { context } from "./context.ts";
 import { flow } from "./flow.ts";
-import { relationship } from "./relationship.ts";
+
+/** A context-map edge: a strategic relationship between two contexts. */
+export const relationship = z.object({
+  upstream: z.string(),
+  downstream: z.string(),
+  pattern: z.string(),
+  integration: z.string(),
+});
 
 /** The whole assembled model: the single source of truth every canvas projects from. */
 export const domainModel = z.object({

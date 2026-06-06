@@ -1,9 +1,14 @@
 import type { Aggregate } from "../schema/aggregate.ts";
 import { eventsByCommand } from "../projections/eventsByCommand.ts";
-import { stateName } from "../projections/stateName.ts";
+import { ANY_STATE } from "../schema/primitives.ts";
 import { bullets } from "../markdown/bullets.ts";
 import { code, codeList } from "../markdown/code.ts";
 import { table } from "../markdown/table.ts";
+
+const stateName = (aggregate: Aggregate, id: string): string => {
+  if (id === ANY_STATE) return "any active";
+  return aggregate.states.find((state) => state.id === id)?.name ?? id;
+};
 
 const transitionRows = (aggregate: Aggregate): string[][] =>
   aggregate.transitions.map((t) => [

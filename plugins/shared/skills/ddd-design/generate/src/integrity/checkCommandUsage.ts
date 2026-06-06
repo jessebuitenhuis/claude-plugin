@@ -1,6 +1,6 @@
 import type { AggregateIds } from "./aggregateIds.ts";
 import { issue, type IntegrityIssue } from "./issue.ts";
-import type { operation, transition } from "../schema/lifecycle.ts";
+import type { operation, transition } from "../schema/aggregate.ts";
 import type { z } from "zod";
 
 type CommandUsage = z.infer<typeof transition> | z.infer<typeof operation>;

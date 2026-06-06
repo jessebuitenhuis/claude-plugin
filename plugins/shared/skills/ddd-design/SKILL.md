@@ -46,6 +46,11 @@ name it, with just its `context.yaml` (identity + classification). The loader
 merges the directory into one model and validates the whole, so a reference in
 one file to an event or context declared in another is checked end-to-end.
 
+Directory and file names are for navigation only — identity comes from the `id:`
+field. Cross-references (relationships, reactions, flow steps) resolve against
+`id:` values, not paths, so the folder may be `work-item-management/` while the
+context is `id: work_item_management`.
+
 ---
 
 ## How to model

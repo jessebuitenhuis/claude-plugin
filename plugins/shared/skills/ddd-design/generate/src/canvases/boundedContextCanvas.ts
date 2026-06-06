@@ -11,11 +11,16 @@ const inboundRows = (context: Context): string[][] => [
 ];
 
 const outboundRows = (context: Context): string[][] => {
-  const commands = context.reactions
-    .filter((reaction) => reaction.inContext !== context.id)
-    .map((reaction) => [code(reaction.thenCommand), "Command", reaction.inContext]);
+  const outward = context.reactions.filter(
+    (reaction) => reaction.inContext !== context.id,
+  );
+  const commands = outward.map((reaction) => [
+    code(reaction.thenCommand),
+    "Command",
+    reaction.inContext,
+  ]);
   const events = [
-    ...new Set(context.reactions.map((r) => `${r.whenEvent}::${r.inContext}`)),
+    ...new Set(outward.map((r) => `${r.whenEvent}::${r.inContext}`)),
   ].map((entry) => {
     const [event, target] = entry.split("::");
     return [code(event ?? ""), "Event", target ?? ""];

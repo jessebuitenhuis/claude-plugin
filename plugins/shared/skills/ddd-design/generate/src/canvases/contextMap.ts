@@ -1,5 +1,4 @@
 import type { DomainModel } from "../schema/domainModel.ts";
-import { isModeled } from "../projections/isModeled.ts";
 import { bullets } from "../markdown/bullets.ts";
 import { table } from "../markdown/table.ts";
 
@@ -9,7 +8,7 @@ const contextName = (model: DomainModel, id: string): string =>
 const contextLine = (model: DomainModel, id: string): string => {
   const context = model.contexts.find((c) => c.id === id);
   if (!context) return id;
-  const stub = isModeled(context) ? "" : " _(stub — not yet modeled)_";
+  const stub = context.aggregates.length ? "" : " _(stub — not yet modeled)_";
   return `**${context.name}** — ${context.classification.domain}${stub}`;
 };
 

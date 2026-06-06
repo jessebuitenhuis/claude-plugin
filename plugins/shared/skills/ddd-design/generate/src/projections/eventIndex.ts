@@ -8,6 +8,3 @@ export const eventIndex = (model: DomainModel): Set<string> => {
       for (const event of aggregate.events) events.add(event.id);
   return events;
 };
-
-export const contextIndex = (model: DomainModel): Set<string> =>
-  new Set(model.contexts.map((context) => context.id));

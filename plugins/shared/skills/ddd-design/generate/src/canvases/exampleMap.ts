@@ -1,6 +1,6 @@
 import type { z } from "zod";
 import type { Aggregate } from "../schema/aggregate.ts";
-import type { example } from "../schema/example.ts";
+import type { example } from "../schema/aggregate.ts";
 import { looksLikeEvent } from "../projections/looksLikeEvent.ts";
 import { code } from "../markdown/code.ts";
 

@@ -6,7 +6,6 @@ flows:
           command: StartIssue
           from: todo
         readModel: MyIssues
-      - reaction: rx_cycle_progress
       - transition:
           command: SubmitForReview
           from: in_progress
@@ -15,3 +14,4 @@ flows:
           command: CompleteIssue
           from: in_review
         readModel: TeamBoard
+      - reaction: rx_cycle_progress

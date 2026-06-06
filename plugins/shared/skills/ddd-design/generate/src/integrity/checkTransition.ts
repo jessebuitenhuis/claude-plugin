@@ -1,5 +1,5 @@
 import type { z } from "zod";
-import type { transition } from "../schema/lifecycle.ts";
+import type { transition } from "../schema/aggregate.ts";
 import { ANY_STATE } from "../schema/primitives.ts";
 import type { AggregateIds } from "./aggregateIds.ts";
 import { checkCommandUsage } from "./checkCommandUsage.ts";

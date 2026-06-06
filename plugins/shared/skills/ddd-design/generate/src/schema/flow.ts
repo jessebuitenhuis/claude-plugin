@@ -1,20 +1,18 @@
 import { z } from "zod";
 
-const transitionStep = z.object({
-  command: z.string(),
-  from: z.string(),
-});
-
-/** One authored step: either a transition or a reaction, optionally reading a model. */
-export const flowStep = z
+/** A step that drives a transition, optionally surfacing a read model. */
+const transitionStep = z
   .object({
-    transition: transitionStep.optional(),
-    reaction: z.string().optional(),
+    transition: z.object({ command: z.string(), from: z.string() }),
     readModel: z.string().optional(),
   })
-  .refine((step) => Boolean(step.transition) !== Boolean(step.reaction), {
-    message: "a flow step is either a transition or a reaction, not both",
-  });
+  .strict();
+
+/** A step that fires a reaction. */
+const reactionStep = z.object({ reaction: z.string() }).strict();
+
+/** Exactly one of transition or reaction; `.strict()` rejects the other key and the empty case. */
+export const flowStep = z.union([transitionStep, reactionStep]);
 
 export const flow = z.object({
   name: z.string(),
@@ -23,3 +21,4 @@ export const flow = z.object({
 });
 
 export type Flow = z.infer<typeof flow>;
+export type FlowStep = z.infer<typeof flowStep>;

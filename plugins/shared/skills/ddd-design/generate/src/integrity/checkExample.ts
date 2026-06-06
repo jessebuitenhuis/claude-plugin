@@ -1,5 +1,5 @@
 import type { z } from "zod";
-import type { example } from "../schema/example.ts";
+import type { example } from "../schema/aggregate.ts";
 import { looksLikeEvent } from "../projections/looksLikeEvent.ts";
 import type { AggregateIds } from "./aggregateIds.ts";
 import { issue, type IntegrityIssue } from "./issue.ts";

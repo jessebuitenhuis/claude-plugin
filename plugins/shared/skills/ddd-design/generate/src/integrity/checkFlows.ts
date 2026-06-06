@@ -1,4 +1,6 @@
 import type { DomainModel } from "../schema/domainModel.ts";
+import type { FlowStep } from "../schema/flow.ts";
+import { ANY_STATE } from "../schema/primitives.ts";
 import { issue, type IntegrityIssue } from "./issue.ts";
 
 const allAggregates = (model: DomainModel) =>
@@ -10,7 +12,9 @@ const transitionExists = (
   from: string,
 ): boolean =>
   allAggregates(model).some((aggregate) =>
-    aggregate.transitions.some((t) => t.command === command && t.from === from),
+    aggregate.transitions.some(
+      (t) => t.command === command && (t.from === from || t.from === ANY_STATE),
+    ),
   );
 
 const reactionExists = (model: DomainModel, id: string): boolean =>
@@ -18,14 +22,21 @@ const reactionExists = (model: DomainModel, id: string): boolean =>
     context.reactions.some((reaction) => reaction.id === id),
   );
 
-export const checkFlows = (model: DomainModel): IntegrityIssue[] => {
-  const issues: IntegrityIssue[] = [];
-  for (const flow of model.flows)
-    for (const step of flow.steps) {
-      if (step.transition && !transitionExists(model, step.transition.command, step.transition.from))
-        issues.push(issue(`flow:${flow.name}`, `missing transition ${step.transition.command}@${step.transition.from}`));
-      if (step.reaction && !reactionExists(model, step.reaction))
-        issues.push(issue(`flow:${flow.name}`, `missing reaction '${step.reaction}'`));
-    }
-  return issues;
+const checkStep = (
+  model: DomainModel,
+  flowName: string,
+  step: FlowStep,
+): IntegrityIssue[] => {
+  if ("transition" in step) {
+    const { command, from } = step.transition;
+    if (transitionExists(model, command, from)) return [];
+    return [issue(`flow:${flowName}`, `missing transition ${command}@${from}`)];
+  }
+  if (reactionExists(model, step.reaction)) return [];
+  return [issue(`flow:${flowName}`, `missing reaction '${step.reaction}'`)];
 };
+
+export const checkFlows = (model: DomainModel): IntegrityIssue[] =>
+  model.flows.flatMap((flow) =>
+    flow.steps.flatMap((step) => checkStep(model, flow.name, step)),
+  );
