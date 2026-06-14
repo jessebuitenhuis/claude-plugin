@@ -56,11 +56,6 @@
 - **Only commit when the build and tests pass.** If a pre-commit hook fails, fix the cause and create a new commit — never amend, never `--no-verify`.
 - **Never commit secrets** (`.env`, credentials, tokens). Stage files by name rather than `git add -A`.
 
-## Continuous integration
-
-- **Cache every build layer separately.** A dependency cache and a task cache solve different problems — caching one does not cache the other. In a Turborepo + pnpm pipeline, cache the pnpm store (`actions/setup-node` with `cache: pnpm`) _and_ persist Turbo's task cache across runs (`actions/cache` on `.turbo` with `TURBO_CACHE_DIR=.turbo`). The store cache only speeds up installs; without the task cache, `build`/`test`/`lint` re-run from scratch every run because Turbo's default cache dir (`node_modules/.cache/turbo`) doesn't survive between runs.
-- **Match the cache to the tools actually in use.** A single-package npm repo needs one layer (`cache: npm`); a second build layer is overhead until there's a task runner to deduplicate work. Don't add Turbo or pnpm "just in case" — wait for the second package.
-
 ## Communication
 
 - **Be concise.** No preambles ("Great question!", "I'll now…"), no trailing recap of what you just did — the diff speaks for itself.
