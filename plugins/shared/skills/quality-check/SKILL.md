@@ -15,7 +15,7 @@ Audit the repo's quality tooling across five layers. Read the relevant config fi
 
 4. **Test coverage** — Is Vitest configured with `@vitest/coverage-v8`? Are coverage thresholds set? The standard is 95% on all four metrics (lines, functions, branches, statements). Check what's excluded — migrations, db connections, and entrypoints (`index.ts`, `bin.ts`) are typical and fine to skip.
 
-5. **Git gates** — Is Husky present with a `pre-commit` hook running lint-staged (ESLint + Prettier on staged files)? Is commitlint configured with `@commitlint/config-conventional`? Is there a CI workflow (`.github/workflows/`) running lint → typecheck → build → test in that order, with `concurrency: cancel-in-progress: true`?
+5. **Git gates** — Is Husky present with a `pre-commit` hook running lint-staged (ESLint + Prettier on staged files)? Is commitlint configured with `@commitlint/config-conventional`? Is there a CI workflow (`.github/workflows/`) running lint → typecheck → build → test in that order, with `concurrency: cancel-in-progress: true`? Is build caching set up to match the tooling — a dependency-store cache (`cache: pnpm`/`npm`), plus a separate Turbo task cache (`.turbo` with `TURBO_CACHE_DIR`) when Turbo is the task runner?
 
 **Deliver a report:**
 

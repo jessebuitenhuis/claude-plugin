@@ -51,3 +51,27 @@ If `package.json` has a `packageManager` field (e.g. `"pnpm@10.10.0"`), the acti
 - uses: pnpm/action-setup@v4
   # no version: key — read from packageManager in package.json
 ```
+
+## 5. Turborepo CI needs two cache layers, not one
+
+A dependency cache and a task cache solve different problems — caching one does not cache the other. `actions/setup-node` with `cache: pnpm` only speeds up installs; on its own, `build`/`test`/`lint` still re-run from scratch every run because Turbo's default cache dir (`node_modules/.cache/turbo`) is wiped between runs. Persist Turbo's task cache separately:
+
+```yaml
+env:
+  TURBO_CACHE_DIR: .turbo
+steps:
+  - uses: pnpm/action-setup@v4
+  - uses: actions/setup-node@v4
+    with:
+      node-version: 22
+      cache: pnpm            # layer 1: dependency store — speeds installs
+  - run: pnpm install --frozen-lockfile
+  - uses: actions/cache@v4   # layer 2: Turbo task cache — skips unchanged tasks
+    with:
+      path: .turbo
+      key: turbo-${{ runner.os }}-${{ github.sha }}
+      restore-keys: turbo-${{ runner.os }}-
+  - run: pnpm turbo run lint typecheck build test
+```
+
+Only add the second layer when Turbo is actually the task runner. A single-package npm repo needs one layer (`cache: npm`); a task cache has nothing to deduplicate until there's a second package going through Turbo.
