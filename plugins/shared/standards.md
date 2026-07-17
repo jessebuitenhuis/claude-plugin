@@ -53,6 +53,13 @@
 - **ADRs for long-term decisions only.** Ship in small, verifiable increments. **Fix root causes, not symptoms** — never bypass a failing check.
 - **Persist durable knowledge in the repo** (CLAUDE.md, ADRs, specs), not external memory.
 
+## Debugging & root cause
+
+- **Investigate before you fix.** Reproduce the failure, then trace it to the root cause — the first symptom is rarely it. A fix you can't explain is a guess, and guesses regress.
+- **One concept, every site.** Before changing a value or rule that may be duplicated (a threshold, a key, a timeframe, an enum branch), grep every occurrence and change them together — or collapse them to a single owner so the next change can't miss one. Re-grep after to confirm zero stragglers. Scattered edits to "the same thing" are Shotgun Surgery; the cause is a violated single source of truth.
+- **Make the bug impossible or caught — not remembered.** Prefer removing the duplication (one source can't drift) over discipline. Where parallel cases must stay separate (per-enum branches, per-regime config), pin the shared invariant with a parametrized test across all cases so a missed branch fails red.
+- **Close the loop.** When a bug exposes a generalisable trap, capture it (offer capture-learning) so the whole class dies once, not this instance.
+
 ## Self-learning
 
 When a generalizable principle emerges, offer to invoke capture-learning without being asked.
